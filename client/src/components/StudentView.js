@@ -31,9 +31,8 @@ const StudentView = ({ name }) => {
     }, [name]);
 
     useEffect(() => {
-        let interval;
         if (!submitted && question) {
-            interval = setInterval(() => {
+            const interval = setInterval(() => {
                 setTimer((prev) => {
                     if (prev <= 1) {
                         clearInterval(interval);
@@ -44,10 +43,9 @@ const StudentView = ({ name }) => {
                     return prev - 1;
                 });
             }, 1000);
+            return () => clearInterval(interval);
         }
-
-        return () => clearInterval(interval);
-    }, [submitted, question, name]); // ✅ Added 'name'
+    }, [submitted, question, name]);
 
     const handleSubmit = () => {
         if (selectedAnswer) {
@@ -60,9 +58,11 @@ const StudentView = ({ name }) => {
         <div className="student-container">
             <div className="student-card">
                 <h1 className="student-title">Hi, {name}</h1>
+
                 {question ? (
                     <>
                         <p className="question-text">{question.text}</p>
+
                         <div className="option-list">
                             {question.options.map((opt, idx) => (
                                 <label key={idx} className="option-item">

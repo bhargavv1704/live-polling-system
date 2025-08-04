@@ -1,19 +1,18 @@
 // src/components/RoleSelector.js
 
 import React from 'react';
-import '../index.css'; // make sure your CSS is loaded
+import '../index.css';
 
 const RoleSelector = ({ setRole }) => {
   return (
-    <div className="role-selector-container">
-      <div className="role-selector-card">
-        <h1 className="role-selector-title">Welcome to the Polling System</h1>
-        <p className="role-selector-subtitle">Please choose your role to continue</p>
-        <div className="role-selector-buttons">
-          <button className="role-button teacher" onClick={() => setRole('teacher')}>
+    <div className="role-container">
+      <div className="role-card">
+        <h1 className="role-title">Select Your Role</h1>
+        <div className="role-buttons">
+          <button className="role-btn" onClick={() => setRole('teacher')}>
             I'm a Teacher
           </button>
-          <button className="role-button student" onClick={() => setRole('student')}>
+          <button className="role-btn" onClick={() => setRole('student')}>
             I'm a Student
           </button>
         </div>
@@ -23,4 +22,3 @@ const RoleSelector = ({ setRole }) => {
 };
 
 export default RoleSelector;
-

@@ -64,13 +64,14 @@ const TeacherView = () => {
   return (
     <div className="teacher-container">
       <div className="teacher-card">
-        <h1 className="teacher-title">Teacher Dashboard</h1>
+        <h1 className="teacher-title">Welcome Teacher</h1>
+
         {!currentPoll || allAnswered ? (
           <>
             <input
               type="text"
               className="question-input"
-              placeholder="Enter your question..."
+              placeholder="Enter your question"
               value={questionText}
               onChange={(e) => setQuestionText(e.target.value)}
             />
