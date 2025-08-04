@@ -1,42 +1,44 @@
+// src/App.js
+
 import React, { useState } from 'react';
 import RoleSelector from './components/RoleSelector';
-import StudentView from './components/StudentView';
 import TeacherView from './components/TeacherView';
+import StudentView from './components/StudentView';
 
 function App() {
   const [role, setRole] = useState(null);
-  const [name, setName] = useState('');
+  const [studentName, setStudentName] = useState('');
 
-  if (!role) return (
-    <div className="container card" style={{ textAlign: 'center' }}>
-      <h2>Select Your Role</h2>
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={() => setRole('teacher')}>I'm a Teacher</button>
-        <button onClick={() => setRole('student')} style={{ marginLeft: '10px' }}>
-          I'm a Student
-        </button>
-      </div>
-    </div>
-  );
+  if (!role) {
+    return <RoleSelector setRole={setRole} />;
+  }
 
-  if (role === 'student' && !name) {
+  if (role === 'student' && !studentName) {
     return (
       <div className="container card" style={{ textAlign: 'center' }}>
-        <h3>Enter your name</h3>
+        <h2>Enter Your Name</h2>
         <input
-          placeholder="e.g., Ayush Bhargav"
-          onChange={(e) => setName(e.target.value)}
+          type="text"
+          placeholder="Enter your name"
+          value={studentName}
+          onChange={(e) => setStudentName(e.target.value)}
         />
-        <div>
-          <button onClick={() => name && setName(name)}>Join</button>
-        </div>
+        <button onClick={() => studentName.trim() && setStudentName(studentName.trim())}>
+          Join
+        </button>
       </div>
     );
   }
 
-  return role === 'teacher'
-    ? <TeacherView />
-    : <StudentView name={name} />;
+  return (
+    <>
+      {role === 'teacher' ? (
+        <TeacherView />
+      ) : (
+        <StudentView name={studentName} />
+      )}
+    </>
+  );
 }
 
 export default App;

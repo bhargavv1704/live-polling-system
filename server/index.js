@@ -40,9 +40,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on('create-poll', (poll) => {
-        currentPoll = poll;
-        answers = {};
-        io.emit('new-poll', poll);
+        const allAnswered = Object.keys(answers).length === students.length;
+        const canCreatePoll = !currentPoll || allAnswered;
+
+        if (canCreatePoll) {
+            currentPoll = poll;
+            answers = {};
+            io.emit('new-poll', poll);
+        } else {
+            socket.emit('poll-error', 'Cannot create a new poll until all students have answered.');
+        }
+
     });
 
     socket.on('submit-answer', ({ name, answer }) => {
