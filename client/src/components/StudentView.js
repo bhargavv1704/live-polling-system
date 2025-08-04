@@ -31,8 +31,9 @@ const StudentView = ({ name }) => {
     }, [name]);
 
     useEffect(() => {
+        let interval;
         if (!submitted && question) {
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 setTimer((prev) => {
                     if (prev <= 1) {
                         clearInterval(interval);
@@ -43,9 +44,10 @@ const StudentView = ({ name }) => {
                     return prev - 1;
                 });
             }, 1000);
-            return () => clearInterval(interval);
         }
-    }, [submitted, question]);
+
+        return () => clearInterval(interval);
+    }, [submitted, question, name]); // ✅ Added 'name'
 
     const handleSubmit = () => {
         if (selectedAnswer) {
