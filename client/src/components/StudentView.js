@@ -58,11 +58,9 @@ const StudentView = ({ name }) => {
         <div className="student-container">
             <div className="student-card">
                 <h1 className="student-title">Hi, {name}</h1>
-
                 {question ? (
                     <>
                         <p className="question-text">{question.text}</p>
-
                         <div className="option-list">
                             {question.options.map((opt, idx) => (
                                 <label key={idx} className="option-item">
