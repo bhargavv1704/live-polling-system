@@ -57,13 +57,15 @@ const StudentView = ({ name }) => {
   return (
     <div className="student-container">
       <div className="student-card">
-        <h1 className="student-title">Hi, {name}</h1>
+        <h2 className="student-title">Hi, {name} 👋</h2>
+
         {question ? (
           <>
-            <p className="question-text">{question.text}</p>
-            <div className="option-list">
+            <p className="student-question">{question.text}</p>
+
+            <div className="student-options">
               {question.options.map((opt, idx) => (
-                <label key={idx} className="option-item">
+                <label key={idx} className="student-option">
                   <input
                     type="radio"
                     name="answer"
@@ -71,17 +73,17 @@ const StudentView = ({ name }) => {
                     disabled={submitted}
                     onChange={(e) => setSelectedAnswer(e.target.value)}
                   />
-                  {opt}
+                  <span>{opt}</span>
                 </label>
               ))}
             </div>
 
             {!submitted && (
               <>
-                <button className="submit-btn" onClick={handleSubmit}>
+                <button className="student-submit-btn" onClick={handleSubmit}>
                   Submit Answer
                 </button>
-                <p className="timer-label">Time left: {timer}s</p>
+                <p className="student-timer">⏳ {timer}s left</p>
               </>
             )}
 
@@ -94,7 +96,7 @@ const StudentView = ({ name }) => {
                     <ul>
                       {Object.entries(results).map(([student, answer]) => (
                         <li key={student}>
-                          {student}: <strong>{answer}</strong>
+                          <strong>{student}</strong>: {answer}
                         </li>
                       ))}
                     </ul>
@@ -104,7 +106,7 @@ const StudentView = ({ name }) => {
             )}
           </>
         ) : (
-          <h4 className="waiting-text">Waiting for a poll to start...</h4>
+          <p className="student-waiting">Waiting for a poll to start...</p>
         )}
       </div>
     </div>

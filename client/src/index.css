@@ -148,78 +148,104 @@ body {
 
 /* === Student View (Figma) === */
 .student-container {
-  padding: 3rem 2rem;
-  max-width: 700px;
-  margin: auto;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
 }
 
 .student-card {
-  background: #ffffff;
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
   text-align: center;
 }
 
 .student-title {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 2rem;
   color: #1e293b;
+  font-weight: 700;
   margin-bottom: 1.5rem;
 }
 
-.question-text {
-  font-size: 1.2rem;
+.question-text,
+.student-question {
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  color: #111827;
 }
 
-.option-list {
+.option-list,
+.student-options {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
-  margin: 1rem 0;
+  margin-bottom: 1.5rem;
 }
 
-.option-item {
-  font-size: 1rem;
+.option-item,
+.student-option {
   display: flex;
   align-items: center;
+  font-size: 1rem;
+  color: #374151;
   gap: 0.5rem;
 }
 
-.submit-btn {
-  background-color: #10b981;
+.student-option input {
+  transform: scale(1.2);
+}
+
+.submit-btn,
+.student-submit-btn {
+  background-color: #2563eb;
   color: white;
-  padding: 10px 20px;
-  font-weight: 600;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   margin-bottom: 1rem;
 }
 
-.submit-btn:hover {
-  background-color: #059669;
+.submit-btn:hover,
+.student-submit-btn:hover {
+  background-color: #1e40af;
 }
 
-.timer-label {
+.timer-label,
+.student-timer {
   font-size: 1.1rem;
   color: #ef4444;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.waiting-text {
+.waiting-text,
+.student-waiting {
   font-size: 1.2rem;
   color: #64748b;
+  font-weight: 500;
 }
 
 .student-results {
   background-color: #f1f5f9;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 12px;
   margin-top: 1rem;
+  text-align: left;
+}
+
+.student-results h3 {
+  margin-bottom: 1rem;
+  color: #111827;
 }
 
 .student-results ul {
@@ -233,4 +259,5 @@ body {
   padding: 0.3rem 0;
   font-size: 1rem;
   border-bottom: 1px solid #e2e8f0;
+  color: #334155;
 }
