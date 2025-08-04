@@ -6,14 +6,20 @@ function StudentView({ name }) {
     const [selectedAnswer, setSelectedAnswer] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [results, setResults] = useState(null);
+    const [submittedList, setSubmittedList] = useState([]);
 
     useEffect(() => {
         socket.emit('student-joined', name);
 
         socket.on('new-poll', (pollData) => {
             setPoll(pollData);
-            setSubmitted(false);  // Reset on new poll
-            setResults(null);     // Clear old results
+            setSubmitted(false);
+            setResults(null);
+            setSubmittedList([]);
+        });
+
+        socket.on('poll-update', ({ answers }) => {
+            setSubmittedList(Object.keys(answers));
         });
 
         socket.on('poll-finished', (answers) => {
@@ -22,6 +28,7 @@ function StudentView({ name }) {
 
         return () => {
             socket.off('new-poll');
+            socket.off('poll-update');
             socket.off('poll-finished');
         };
     }, [name]);
@@ -40,9 +47,17 @@ function StudentView({ name }) {
 
             {submitted ? (
                 <div>
-                    <h3>Answer submitted! ✅</h3>
+                    <h3>✅ Answer submitted!</h3>
                     {!results ? (
-                        <p>Waiting for others to submit...</p>
+                        <>
+                            <p>Waiting for others to submit...</p>
+                            <h4>Who has submitted so far:</h4>
+                            <ul>
+                                {submittedList.map((n) => (
+                                    <li key={n}>{n}</li>
+                                ))}
+                            </ul>
+                        </>
                     ) : (
                         <div>
                             <h4>Final Results:</h4>

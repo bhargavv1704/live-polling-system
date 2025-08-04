@@ -2,12 +2,16 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors: { origin: '*' }
+    cors: {
+        origin: "https://stellular-peony-934835.netlify.app",
+        methods: ["GET", "POST"]
+    }
 });
 
 app.use(
@@ -16,7 +20,9 @@ app.use(
         methods: ["GET", "POST"]
     })
 );
+
 app.use(express.json());
+
 app.get("/", (req, res) => {
     res.send("Backend is running!");
 });
@@ -41,9 +47,20 @@ io.on('connection', (socket) => {
 
     socket.on('submit-answer', ({ name, answer }) => {
         answers[name] = answer;
-        io.emit('poll-update', { answers, total: students.length });
 
-        // If all students have answered
+        // ✅ Log answer with timestamp
+        const logLine = `${new Date().toISOString()} - ${name} answered: ${answer}\n`;
+        fs.appendFile('poll_submissions.log', logLine, (err) => {
+            if (err) console.error('Error writing to file:', err);
+        });
+
+        // ✅ Notify frontend of submission progress
+        io.emit('poll-update', {
+            answers,
+            total: students.length
+        });
+
+        // ✅ If all students submitted, broadcast final result
         if (Object.keys(answers).length === students.length) {
             io.emit('poll-finished', answers);
         }
