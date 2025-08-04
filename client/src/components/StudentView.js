@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { socket } from '../socket';
 
-export default function StudentView({ name }) {
+function StudentView({ name }) {
     const [poll, setPoll] = useState(null);
-    const [selected, setSelected] = useState('');
+    const [selectedAnswer, setSelectedAnswer] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [results, setResults] = useState(null);
 
@@ -12,51 +12,68 @@ export default function StudentView({ name }) {
 
         socket.on('new-poll', (pollData) => {
             setPoll(pollData);
-            setSubmitted(false);
-            setResults(null);
-        });
-
-        socket.on('poll-update', () => {
-            // ignore partial updates for now
+            setSubmitted(false);  // Reset on new poll
+            setResults(null);     // Clear old results
         });
 
         socket.on('poll-finished', (answers) => {
             setResults(answers);
         });
+
+        return () => {
+            socket.off('new-poll');
+            socket.off('poll-finished');
+        };
     }, [name]);
 
     const handleSubmit = () => {
-        socket.emit('submit-answer', { name, answer: selected });
+        if (!selectedAnswer) return alert('Please select an answer');
+        socket.emit('submit-answer', { name, answer: selectedAnswer });
         setSubmitted(true);
     };
 
-    if (!poll) return <h3>Waiting for teacher to post a question...</h3>;
+    if (!poll) return <h3>Waiting for poll...</h3>;
 
     return (
-        <div>
+        <div style={{ padding: 20 }}>
             <h2>{poll.question}</h2>
-            {poll.options.map((opt, i) => (
-                <div key={i}>
-                    <input
-                        type="radio"
-                        name="option"
-                        value={opt}
-                        onChange={() => setSelected(opt)}
-                        disabled={submitted}
-                    />
-                    {opt}
-                </div>
-            ))}
-            {!submitted && <button onClick={handleSubmit}>Submit</button>}
 
-            {results && (
+            {submitted ? (
                 <div>
-                    <h3>Results:</h3>
-                    {Object.entries(results).map(([student, ans]) => (
-                        <p key={student}>{student}: {ans}</p>
-                    ))}
+                    <h3>Answer submitted! ✅</h3>
+                    {!results ? (
+                        <p>Waiting for others to submit...</p>
+                    ) : (
+                        <div>
+                            <h4>Final Results:</h4>
+                            <ul>
+                                {Object.entries(results).map(([student, answer]) => (
+                                    <li key={student}>
+                                        {student}: {answer}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
+            ) : (
+                <>
+                    {poll.options.map((opt, i) => (
+                        <div key={i}>
+                            <input
+                                type="radio"
+                                name="option"
+                                value={opt}
+                                onChange={(e) => setSelectedAnswer(e.target.value)}
+                            />
+                            <label>{opt}</label>
+                        </div>
+                    ))}
+                    <button onClick={handleSubmit} style={{ marginTop: '10px' }}>Submit</button>
+                </>
             )}
         </div>
     );
 }
+
+export default StudentView;
