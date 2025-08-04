@@ -2,40 +2,41 @@ import React, { useState } from 'react';
 import RoleSelector from './components/RoleSelector';
 import StudentView from './components/StudentView';
 import TeacherView from './components/TeacherView';
-import { socket } from './socket'; // ✅ make sure this import exists
 
 function App() {
   const [role, setRole] = useState(null);
   const [name, setName] = useState('');
-  const [joined, setJoined] = useState(false); // ✅ track if student has joined
 
-  if (!role) return <RoleSelector setRole={setRole} />;
+  if (!role) return (
+    <div className="container card" style={{ textAlign: 'center' }}>
+      <h2>Select Your Role</h2>
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => setRole('teacher')}>I'm a Teacher</button>
+        <button onClick={() => setRole('student')} style={{ marginLeft: '10px' }}>
+          I'm a Student
+        </button>
+      </div>
+    </div>
+  );
 
-  if (role === 'student' && !joined) {
-    const handleJoin = () => {
-      const trimmedName = name.trim();
-      if (trimmedName) {
-        socket.emit('student-joined', trimmedName); // ✅ emit join event only once
-        setJoined(true);
-      }
-    };
-
+  if (role === 'student' && !name) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '20%' }}>
-        <h3>Enter your name:</h3>
+      <div className="container card" style={{ textAlign: 'center' }}>
+        <h3>Enter your name</h3>
         <input
-          type="text"
-          value={name}
+          placeholder="e.g., Ayush Bhargav"
           onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
         />
-        <br /><br />
-        <button onClick={handleJoin}>Join</button>
+        <div>
+          <button onClick={() => name && setName(name)}>Join</button>
+        </div>
       </div>
     );
   }
 
-  return role === 'teacher' ? <TeacherView /> : <StudentView name={name} />;
+  return role === 'teacher'
+    ? <TeacherView />
+    : <StudentView name={name} />;
 }
 
 export default App;
