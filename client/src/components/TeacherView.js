@@ -70,19 +70,19 @@ const TeacherView = () => {
           <>
             <input
               type="text"
-              className="question-input"
               placeholder="Enter your question"
               value={questionText}
               onChange={(e) => setQuestionText(e.target.value)}
+              className="question-input"
             />
             {options.map((opt, idx) => (
               <input
                 key={idx}
                 type="text"
-                className="option-input"
                 placeholder={`Option ${idx + 1}`}
                 value={opt}
                 onChange={(e) => handleOptionChange(idx, e.target.value)}
+                className="option-input"
               />
             ))}
             <button className="create-btn" onClick={handleCreatePoll}>
@@ -101,7 +101,7 @@ const TeacherView = () => {
 
         {Object.keys(answers).length > 0 && (
           <div className="results-card">
-            <h3>Live Poll Results:</h3>
+            <h3>Live Poll Results</h3>
             <ul>
               {Object.entries(answers).map(([student, answer]) => (
                 <li key={student}>
