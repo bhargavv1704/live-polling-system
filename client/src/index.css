@@ -63,3 +63,206 @@ input {
   font-weight: bold;
   margin-top: 1rem;
 }
+
+/* RoleSelector styling based on Figma */
+
+.role-selector-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f6f9;
+}
+
+.role-selector-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.role-selector-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.role-selector-subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.role-selector-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.role-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.role-button.teacher {
+  background-color: #2563eb;
+  color: white;
+}
+
+.role-button.teacher:hover {
+  background-color: #1e40af;
+}
+
+.role-button.student {
+  background-color: #10b981;
+  color: white;
+}
+
+.role-button.student:hover {
+  background-color: #059669;
+}
+
+/* TeacherView Figma Styling */
+
+.teacher-container {
+  padding: 3rem 2rem;
+  max-width: 700px;
+  margin: auto;
+}
+
+.teacher-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.teacher-title {
+  font-size: 1.8rem;
+  color: #1e293b;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.question-input,
+.option-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+}
+
+.create-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.create-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.poll-card,
+.results-card {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* StudentView Figma Styling */
+
+.student-container {
+  padding: 3rem 2rem;
+  max-width: 700px;
+  margin: auto;
+}
+
+.student-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.student-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.option-item {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.submit-btn {
+  background-color: #10b981;
+  color: white;
+  padding: 10px 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.submit-btn:hover {
+  background-color: #059669;
+}
+
+.timer-label {
+  font-size: 1.1rem;
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.waiting-text {
+  font-size: 1.2rem;
+  color: #64748b;
+}
+
+.student-results {
+  background-color: #f1f5f9;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+}

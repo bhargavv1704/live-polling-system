@@ -32,17 +32,7 @@ const TeacherView = () => {
       setStudents(updatedStudents);
     });
 
-    socket.on('poll-error', (message) => {
-      alert(message);
-    });
-
-    return () => {
-      socket.off('new-poll');
-      socket.off('poll-update');
-      socket.off('poll-finished');
-      socket.off('student-list-updated');
-      socket.off('poll-error');
-    };
+    return () => socket.disconnect();
   }, []);
 
   const handleOptionChange = (index, value) => {
@@ -52,24 +42,18 @@ const TeacherView = () => {
   };
 
   const handleCreatePoll = () => {
-    if (!questionText.trim() || options.some((opt) => !opt.trim())) {
+    if (questionText && options.every((opt) => opt.trim())) {
+      const poll = {
+        text: questionText,
+        options: options,
+      };
+      socket.emit('create-poll', poll);
+      setCurrentPoll(poll);
+      setQuestionText('');
+      setOptions(['', '', '', '']);
+    } else {
       alert('Please fill all question and options.');
-      return;
     }
-
-    if (currentPoll && !allAnswered) {
-      alert('Please wait until all students have answered before creating a new poll.');
-      return;
-    }
-
-    const poll = {
-      text: questionText,
-      options: options,
-    };
-    socket.emit('create-poll', poll);
-    setCurrentPoll(poll);
-    setQuestionText('');
-    setOptions(['', '', '', '']);
   };
 
   const handleResetPoll = () => {
@@ -78,14 +62,15 @@ const TeacherView = () => {
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h2>Teacher Dashboard</h2>
+    <div className="teacher-container">
+      <div className="teacher-card">
+        <h1 className="teacher-title">Teacher Dashboard</h1>
         {!currentPoll || allAnswered ? (
           <>
             <input
               type="text"
-              placeholder="Enter question"
+              className="question-input"
+              placeholder="Enter your question..."
               value={questionText}
               onChange={(e) => setQuestionText(e.target.value)}
             />
@@ -93,15 +78,18 @@ const TeacherView = () => {
               <input
                 key={idx}
                 type="text"
+                className="option-input"
                 placeholder={`Option ${idx + 1}`}
                 value={opt}
                 onChange={(e) => handleOptionChange(idx, e.target.value)}
               />
             ))}
-            <button onClick={handleCreatePoll}>Create Poll</button>
+            <button className="create-btn" onClick={handleCreatePoll}>
+              Create Poll
+            </button>
           </>
         ) : (
-          <div className="card">
+          <div className="poll-card">
             <p className="question">{currentPoll.text}</p>
             <h4>Waiting for students to answer...</h4>
             <p>
@@ -111,7 +99,7 @@ const TeacherView = () => {
         )}
 
         {Object.keys(answers).length > 0 && (
-          <div className="card">
+          <div className="results-card">
             <h3>Live Poll Results:</h3>
             <ul>
               {Object.entries(answers).map(([student, answer]) => (
@@ -120,7 +108,11 @@ const TeacherView = () => {
                 </li>
               ))}
             </ul>
-            {allAnswered && <button onClick={handleResetPoll}>Ask New Question</button>}
+            {allAnswered && (
+              <button className="create-btn" onClick={handleResetPoll}>
+                Ask New Question
+              </button>
+            )}
           </div>
         )}
       </div>

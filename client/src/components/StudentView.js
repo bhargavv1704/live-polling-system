@@ -6,117 +6,109 @@ import io from 'socket.io-client';
 const socket = io('https://live-poll-backend-nd3j.onrender.com');
 
 const StudentView = ({ name }) => {
-  const [question, setQuestion] = useState(null);
-  const [selectedAnswer, setSelectedAnswer] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [results, setResults] = useState(null);
-  const [timer, setTimer] = useState(60);
-  const [showResults, setShowResults] = useState(false);
+    const [question, setQuestion] = useState(null);
+    const [selectedAnswer, setSelectedAnswer] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+    const [results, setResults] = useState(null);
+    const [timer, setTimer] = useState(60);
 
-  useEffect(() => {
-    socket.emit('student-joined', name);
+    useEffect(() => {
+        socket.emit('student-joined', name);
 
-    socket.on('new-poll', (poll) => {
-      setQuestion(poll);
-      setSubmitted(false);
-      setSelectedAnswer('');
-      setResults(null);
-      setTimer(60);
-      setShowResults(false);
-
-      // Start countdown
-      const interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev === 1) {
-            clearInterval(interval);
-            if (!submitted) {
-              socket.emit('submit-answer', { name, answer: 'No Answer' });
-              setSubmitted(true);
-              setShowResults(true);
-            }
-            return 0;
-          }
-          return prev - 1;
+        socket.on('new-poll', (poll) => {
+            setQuestion(poll);
+            setSubmitted(false);
+            setSelectedAnswer('');
+            setResults(null);
+            setTimer(60);
         });
-      }, 1000);
 
-      return () => clearInterval(interval);
-    });
+        socket.on('poll-finished', (answers) => {
+            setResults(answers);
+        });
 
-    socket.on('poll-finished', (answers) => {
-      setResults(answers);
-      setShowResults(true);
-    });
+        return () => socket.disconnect();
+    }, [name]);
 
-    return () => socket.disconnect();
-  }, [name, submitted]);
+    useEffect(() => {
+        if (!submitted && question) {
+            const interval = setInterval(() => {
+                setTimer((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(interval);
+                        socket.emit('submit-answer', { name, answer: 'No Answer' });
+                        setSubmitted(true);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [submitted, question]);
 
-  const handleSubmit = () => {
-    if (selectedAnswer && !submitted) {
-      socket.emit('submit-answer', { name, answer: selectedAnswer });
-      setSubmitted(true);
-      setShowResults(true);
-    }
-  };
+    const handleSubmit = () => {
+        if (selectedAnswer) {
+            socket.emit('submit-answer', { name, answer: selectedAnswer });
+            setSubmitted(true);
+        }
+    };
 
-  return (
-    <div className="container">
-      <div className="card">
-        <h2>Welcome, {name}</h2>
+    return (
+        <div className="student-container">
+            <div className="student-card">
+                <h1 className="student-title">Hi, {name}</h1>
+                {question ? (
+                    <>
+                        <p className="question-text">{question.text}</p>
+                        <div className="option-list">
+                            {question.options.map((opt, idx) => (
+                                <label key={idx} className="option-item">
+                                    <input
+                                        type="radio"
+                                        name="answer"
+                                        value={opt}
+                                        disabled={submitted}
+                                        onChange={(e) => setSelectedAnswer(e.target.value)}
+                                    />
+                                    {opt}
+                                </label>
+                            ))}
+                        </div>
 
-        {question ? (
-          <>
-            <p className="question">{question.text}</p>
-            <div className="answers">
-              {question.options.map((opt, idx) => (
-                <label key={idx}>
-                  <input
-                    type="radio"
-                    name="answer"
-                    value={opt}
-                    disabled={submitted}
-                    onChange={(e) => setSelectedAnswer(e.target.value)}
-                  />{' '}
-                  {opt}
-                </label>
-              ))}
-            </div>
+                        {!submitted && (
+                            <>
+                                <button className="submit-btn" onClick={handleSubmit}>
+                                    Submit Answer
+                                </button>
+                                <p className="timer-label">Time left: {timer}s</p>
+                            </>
+                        )}
 
-            {!submitted && (
-              <>
-                <button onClick={handleSubmit}>Submit</button>
-                <p className="timer">Time left: {timer}s</p>
-              </>
-            )}
-
-            {submitted && showResults && (
-              <div className="card">
-                <h3>Your answer has been submitted!</h3>
-                {results && (
-                  <>
-                    <h4>Live Results:</h4>
-                    <ul>
-                      {Object.entries(results).map(([student, answer]) => (
-                        <li key={student}>
-                          {student}: <strong>{answer}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
+                        {submitted && (
+                            <div className="student-results">
+                                <h3>Your answer has been submitted!</h3>
+                                {results && (
+                                    <>
+                                        <h4>Live Results</h4>
+                                        <ul>
+                                            {Object.entries(results).map(([student, answer]) => (
+                                                <li key={student}>
+                                                    {student}: <strong>{answer}</strong>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <h4 className="waiting-text">Waiting for a poll to start...</h4>
                 )}
-              </div>
-            )}
-
-            {submitted && !showResults && (
-              <p>Waiting for poll to finish...</p>
-            )}
-          </>
-        ) : (
-          <h4>Waiting for a poll to start...</h4>
-        )}
-      </div>
-    </div>
-  );
+            </div>
+        </div>
+    );
 };
 
 export default StudentView;
