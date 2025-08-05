@@ -32,7 +32,12 @@ const TeacherView = () => {
       setStudents(updatedStudents);
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.off('new-poll');
+      socket.off('poll-update');
+      socket.off('poll-finished');
+      socket.off('student-list-updated');
+    };
   }, []);
 
   const handleOptionChange = (index, value) => {

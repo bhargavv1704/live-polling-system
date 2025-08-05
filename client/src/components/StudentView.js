@@ -13,21 +13,32 @@ const StudentView = ({ name }) => {
     const [timer, setTimer] = useState(60);
 
     useEffect(() => {
+        if (!name) return;
+
         socket.emit('student-joined', name);
 
-        socket.on('new-poll', (poll) => {
+        // If a poll already exists, fetch it again after joining
+        socket.emit('request-current-poll');
+
+        const handleNewPoll = (poll) => {
             setQuestion(poll);
             setSubmitted(false);
             setSelectedAnswer('');
             setResults(null);
             setTimer(60);
-        });
+        };
 
-        socket.on('poll-finished', (answers) => {
+        const handlePollFinished = (answers) => {
             setResults(answers);
-        });
+        };
 
-        return () => socket.disconnect();
+        socket.on('new-poll', handleNewPoll);
+        socket.on('poll-finished', handlePollFinished);
+
+        return () => {
+            socket.off('new-poll', handleNewPoll);
+            socket.off('poll-finished', handlePollFinished);
+        };
     }, [name]);
 
     useEffect(() => {
@@ -83,7 +94,8 @@ const StudentView = ({ name }) => {
                                 <button className="student-submit-btn" onClick={handleSubmit}>
                                     Submit Answer
                                 </button>
-                                <p className="student-timer">⏳ {timer}s left</p>
+                                <p className="student-timer">⏳ {timer}s left
+                                </p>
                             </>
                         )}
 

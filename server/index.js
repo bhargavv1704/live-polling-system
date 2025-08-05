@@ -39,6 +39,12 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('student-list-updated', students);
     });
 
+    socket.on('request-current-poll', () => {
+        if (currentPoll) {
+            socket.emit('new-poll', currentPoll);
+        }
+    });
+
     socket.on('create-poll', (poll) => {
         const allAnswered = Object.keys(answers).length === students.length;
         const canCreatePoll = !currentPoll || allAnswered;
@@ -50,25 +56,21 @@ io.on('connection', (socket) => {
         } else {
             socket.emit('poll-error', 'Cannot create a new poll until all students have answered.');
         }
-
     });
 
     socket.on('submit-answer', ({ name, answer }) => {
         answers[name] = answer;
 
-        // ✅ Log answer with timestamp
         const logLine = `${new Date().toISOString()} - ${name} answered: ${answer}\n`;
         fs.appendFile('poll_submissions.log', logLine, (err) => {
             if (err) console.error('Error writing to file:', err);
         });
 
-        // ✅ Notify frontend of submission progress
         io.emit('poll-update', {
             answers,
             total: students.length
         });
 
-        // ✅ If all students submitted, broadcast final result
         if (Object.keys(answers).length === students.length) {
             io.emit('poll-finished', answers);
         }
